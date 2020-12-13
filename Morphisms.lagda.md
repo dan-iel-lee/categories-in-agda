@@ -47,6 +47,9 @@ module MorphTypes (C : Category {𝒸} {𝓁}) where
   IsIso : (f : x ⟶ y) → Set 𝒸
   IsIso {x} {y} f = Σ[ g ∈ y ⟶ x ] AreInv f g
 
+  AreIso : Obj → Obj → Set 𝒸
+  AreIso x y = Σ[ f ∈ x ⟶ y ] IsIso f
+
   _⁻ : (f : x ⟶ y) → {IsIso f} → (y ⟶ x)
   (f ⁻) {g , _} = g
 
