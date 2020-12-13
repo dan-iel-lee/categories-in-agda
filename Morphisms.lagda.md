@@ -41,8 +41,14 @@ module MorphTypes (C : Category {𝒸} {𝓁}) where
   IsSplitEpi : (x ⟶ y) → Set 𝒸
   IsSplitEpi {x} {y} g = Σ[ s ∈ y ⟶ x ] g ∘ s ≡ id y
 
+  AreInv : (f : x ⟶ y) → (g : y ⟶ x) → Set 𝒸
+  AreInv {x} {y} f g = (g ∘ f ≡ id x) × (f ∘ g ≡ id y)
+
   IsIso : (f : x ⟶ y) → Set 𝒸
-  IsIso {x} {y} f = Σ[ g ∈ y ⟶ x ] (g ∘ f ≡ id x) × (f ∘ g ≡ id y)
+  IsIso {x} {y} f = Σ[ g ∈ y ⟶ x ] AreInv f g
+
+  _⁻ : (f : x ⟶ y) → {IsIso f} → (y ⟶ x)
+  (f ⁻) {g , _} = g
 
 ```
 
@@ -52,14 +58,15 @@ module MorphTypes (C : Category {𝒸} {𝓁}) where
 module MorphProps (C : Category {𝒸} {𝓁}) where
 
   open Category C
-  open MorphTypes
+  open MorphTypes C
+  -- import MorphTypes as MT
 
   private
     variable
       x y : Obj
 
   -- split monic implies monic
-  splitMon=>Mon : ∀ (f : x ⟶ y) → IsSplitMon C f → IsMonic C f
+  splitMon=>Mon : ∀ (f : x ⟶ y) → IsSplitMon f → IsMonic f
   splitMon=>Mon {x} {y} f (r , 𝓅) {z = z} {a} {a'} = λ eq →
     begin
       a
@@ -80,9 +87,9 @@ module MorphProps (C : Category {𝒸} {𝓁}) where
     ∎
 
   postulate
-    splitEpi=>Epi : ∀ (f : x ⟶ y) → IsSplitEpi C f → IsEpic C f
+    splitEpi=>Epi : ∀ (f : x ⟶ y) → IsSplitEpi f → IsEpic f
 ```
-## Relation with isomorphism
+## Isomorphisms
 
 ```
 
@@ -120,6 +127,14 @@ module MorphProps (C : Category {𝒸} {𝓁}) where
           f ∘ r
         ∎
 
+  -- the identity is its own inverse
+  id-iso : IsIso (id x)
+  id-iso {x = x} = (id x) , (lunit , lunit)
+
+  -- inverse is iso
+  inv-iso : ∀ (f : x ⟶ y) → (i : IsIso f) → IsIso ((f ⁻) {i})
+  inv-iso f (_ , ru , lu) = f , (lu , ru)
+
 -- TODO: Monic and Split Epic => Isomorphic
 
 
@@ -135,16 +150,16 @@ Happily, and perhaps not all too surprisingly, this fact follows definitionaly.
   Cᵒ = C ᵒ
 
   -- WOAH it follows through definitionaly
-  mon=>epiᵒ : ∀ {f : x ⟶ y} → IsMonic C f → IsEpic Cᵒ f
+  mon=>epiᵒ : ∀ {f : x ⟶ y} → IsMonic f → MorphTypes.IsEpic Cᵒ f
   mon=>epiᵒ mo = mo -- λ b b' eq → mo b b' eq
 
-  epi=>monᵒ : ∀ {f : x ⟶ y} → IsEpic C f → IsMonic Cᵒ f
+  epi=>monᵒ : ∀ {f : x ⟶ y} → IsEpic f → MorphTypes.IsMonic Cᵒ f
   epi=>monᵒ ep = ep
 
-  smon=>sepiᵒ : ∀ {f : x ⟶ y} → IsSplitMon C f → IsSplitEpi Cᵒ f
+  smon=>sepiᵒ : ∀ {f : x ⟶ y} → IsSplitMon f → MorphTypes.IsSplitEpi Cᵒ f
   smon=>sepiᵒ mo = mo -- λ b b' eq → mo b b' eq
 
-  sepi=>monᵒ : ∀ {f : x ⟶ y} → IsSplitEpi C f → IsSplitMon Cᵒ f
+  sepi=>monᵒ : ∀ {f : x ⟶ y} → IsSplitEpi f → MorphTypes.IsSplitMon Cᵒ f
   sepi=>monᵒ mo = mo -- λ b b' eq → mo b b' eq
 
 ```
