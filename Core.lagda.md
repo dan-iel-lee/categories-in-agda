@@ -26,7 +26,7 @@ record Category : Set (suc (𝒸 ⊔ 𝓁)) where
 
     _∘_ : ∀ {x y z : Obj} → (y ⟶ z) → (x ⟶ y) → (x ⟶ z)
 
-    id_ : ∀ (x : Obj) → (x ⟶ x)
+    id : ∀ (x : Obj) → (x ⟶ x)
     lunit : ∀ {x y : Obj} {f : x ⟶ y} → f ∘ (id x) ≡ f
     runit : ∀ {x y : Obj} {f : x ⟶ y} → (id y) ∘ f ≡ f
 
@@ -42,12 +42,12 @@ flip : (A → B → C) → (B → A → C)
 flip f b a = f a b
 
 _ᵒ : Category {𝒸} {𝓁} → Category {𝒸} {𝓁}
-record { Obj = Obj ; _⟶_ = _⟶_ ; _∘_ = _∘_ ; id_ = id_ ; lunit = lunit ; runit = runit ; assoc = assoc } ᵒ =
+record { Obj = Obj ; _⟶_ = _⟶_ ; _∘_ = _∘_ ; id = id ; lunit = lunit ; runit = runit ; assoc = assoc } ᵒ =
   record
     { Obj = Obj
     ; _⟶_ = _⟶'_
     ; _∘_ = flip _∘_
-    ; id_ = id_
+    ; id = id
     ; lunit = runit
     ; runit = lunit
     ; assoc = sym assoc
