@@ -1,6 +1,9 @@
 # Functors
 
 ```
+
+{-# OPTIONS --without-K #-}
+
 module Category.Functors where
 
 open import Category.Core

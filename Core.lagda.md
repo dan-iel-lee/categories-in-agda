@@ -67,6 +67,19 @@ postulate
 
 ```
 
+## Some properties of categories
+```
+-- a set is defined as having only 0-level structure (i.e. all identities are identical)
+isSet : (A : Set 𝓁) → Set 𝓁
+isSet A = ∀ {x y : A} {p q : x ≡ y} → p ≡ q
+
+-- a category is locally small if all Homs are sets
+LocallySmall : Category {𝒸} {𝓁} → Set (𝒸 ⊔ 𝓁)
+LocallySmall C = ∀ {x y : Category.Obj C} → isSet (Category._⟶_ C x y)
+
+
+```
+
 
 ## Just playing with stuff
 ```

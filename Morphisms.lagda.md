@@ -5,6 +5,7 @@
 A morphism is monic if it 
 
 ```
+{-# OPTIONS --without-K #-}
 
 open import Level
 open import Category.Core
